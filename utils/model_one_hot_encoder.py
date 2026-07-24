@@ -45,11 +45,8 @@ for col in df.columns:
 X = df.drop("Attrition",axis=1)
 y = df["Attrition"]
 
+print(X.columns)
 X_train,X_test,y_train,y_test = split(X,y)
-
-le = LabelEncoder()
-
-X_train,X_test = encode(le,X_train,X_test,object_cols)
 
 models = {"LR":LogisticRegression(),
           "KNN":KNeighborsClassifier(),

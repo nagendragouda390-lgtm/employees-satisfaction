@@ -12,7 +12,7 @@ model_label_encoder = joblib.load("pipeline_LE.pkl")
 
 model_one_hot_encoder = joblib.load("pipe_ohe.pkl")
 
-le = joblib.load("label_encoder.pkl")
+oe = joblib.load("ordinal_encoder.pkl")
 
 df_w_o = test[[
              'Age',
@@ -43,13 +43,15 @@ df_w_o = test[[
 
 prediction_1 = model_without_object.predict(df_w_o)
 
+print(prediction_1)
 object_cols = []
 
 for col in test.columns:
-    if test[col].dtypes == "object":
-        object_cols.append(col)
-
-df_le = test[[
+    if col != "Over18":
+      if test[col].dtypes == "object":
+         object_cols.append(col)
+ 
+df_oe = test[[
              'Age',
              'BusinessTravel', 
              'DailyRate', 
@@ -82,10 +84,56 @@ df_le = test[[
              'YearsSinceLastPromotion', 
              'YearsWithCurrManager'
            ]]
-for col in object_cols:
-      df_le[col] = le.transform(df_le[col])
 
-predictions_2 = model_label_encoder(df_le)
+df_oe[object_cols] = oe.transform(df_oe[object_cols])
 
-print(predictions_2)
+prediction_2 = model_label_encoder.predict(df_oe)
 
+print(prediction_2)
+
+df_ohe = df[[
+          'Age',
+          'BusinessTravel',
+          'DailyRate',
+          'Department',
+          'DistanceFromHome',
+          'Education',
+          'EducationField',
+          'EnvironmentSatisfaction',
+          'Gender',
+          'HourlyRate',
+          'JobInvolvement',
+          'JobLevel',
+          'JobRole',
+          'JobSatisfaction',
+          'MaritalStatus',
+          'MonthlyIncome',
+          'MonthlyRate',
+          'NumCompaniesWorked',
+          'OverTime',
+          'PercentSalaryHike',
+          'PerformanceRating',
+          'RelationshipSatisfaction',
+          'StandardHours',
+          'StockOptionLevel',
+          'TotalWorkingYears',
+          'TrainingTimesLastYear',
+          'WorkLifeBalance',
+          'YearsAtCompany',
+          'YearsInCurrentRole',
+          'YearsSinceLastPromotion',
+          'YearsWithCurrManager'
+      ]]
+
+prediction_3 = model_one_hot_encoder.predict(df_ohe)
+
+print(prediction_3)
+
+result = pd.DataFrame({
+         "actual": df["Attrition"],
+         "no_encoder": prediction_1,
+         "OrdinalEncoder" : prediction_2,
+         "OneHotEncoder" : prediction_3,
+})
+
+result.to_csv("result.csv",index=False)

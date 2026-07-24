@@ -53,7 +53,7 @@ for key in models.keys():
    pipes.append(pipe)
    acc, recall, precision , conf = metrics(pipe,X_test,y_test)
 
-   #print(f"{key}:\naccuracy : {acc}\nrecall : {recall} \nprecision : {precision} \n conf : {conf}")
+   print(f"{key}:\naccuracy : {acc}\nrecall : {recall} \nprecision : {precision} \n conf : {conf}")
 """ Performance :
       
       LR:

@@ -1,173 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Attrition Predictor</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vantage HR &mdash; Employee Attrition Predictor</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<header class="navbar">
-    <h2>Employee Attrition Predictor</h2>
+<nav class="navbar">
+  <div class="nav-wrap">
+    <div class="brand">
+      <span class="brand-mark">V</span>
+      <span class="brand-name">Vantage<span class="accent">HR</span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#predict">Predictor</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">People Analytics Suite</p>
+    <h1>Know who's at risk<br>before they walk out the door.</h1>
+    <p class="hero-sub">
+      Vantage HR's Attrition Predictor uses a machine learning model trained on
+      workforce data to estimate an employee's likelihood of leaving &mdash;
+      so your HR team can act early with retention that works.
+    </p>
+    <a href="#predict" class="btn btn-primary">Run a Prediction</a>
+  </div>
 </header>
 
-<div class="container">
+<section class="stats">
+  <div class="stat">
+    <span class="stat-num">1,470</span>
+    <span class="stat-label">Employee records analyzed</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">30</span>
+    <span class="stat-label">Signals per employee</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">84%</span>
+    <span class="stat-label">Model accuracy</span>
+  </div>
+</section>
 
-    <div class="hero">
-        <h1>Predict Employee Attrition</h1>
-
-        <p>
-            Fill in the employee details below.
-            The AI model will estimate whether the employee
-            is likely to leave the company.
-        </p>
+<main id="predict" class="form-section">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Employee Attrition Risk Assessment</h2>
+      <p>Fill in the employee profile below. Fields with a dropdown use standardized
+        labels so results stay consistent across your organization.</p>
     </div>
 
-<form action="/predict" method="POST">
+    <form action="{{ url_for('predict') }}" method="POST" class="predict-form" id="predict-form">
+      <div class="field-grid">
+        {% for f in fields %}
+        <div class="field">
+          <label for="{{ f.name }}">{{ f.label }}</label>
+          {% if f.type == 'select' %}
+          <select name="{{ f.name }}" id="{{ f.name }}" required>
+            {% for opt in f.options %}
+            <option value="{{ opt.value }}">{{ opt.label }}</option>
+            {% endfor %}
+          </select>
+          {% else %}
+          <input type="number" name="{{ f.name }}" id="{{ f.name }}"
+                 min="{{ f.min }}" max="{{ f.max }}" value="{{ f.default }}" required>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
 
-<div class="card">
-
-<h3>Personal Information</h3>
-
-<div class="grid">
-
-<div class="input-box">
-<label>Age</label>
-<input
-type="number"
-name="Age"
-min="18"
-max="60"
-required>
-</div>
-
-<div class="input-box">
-<label>Gender</label>
-
-<select name="Gender" required>
-
-<option value="Male">Male</option>
-
-<option value="Female">Female</option>
-
-</select>
-
-</div>
-
-<div class="input-box">
-<label>Marital Status</label>
-
-<select
-name="MaritalStatus"
-required>
-
-<option value="Single">Single</option>
-
-<option value="Married">Married</option>
-
-<option value="Divorced">Divorced</option>
-
-</select>
-
-</div>
-
-<div class="input-box">
-
-<label>Education</label>
-
-<input
-type="number"
-name="Education"
-min="1"
-max="5"
-required>
-
-</div>
-
-<div class="input-box">
-
-<label>Education Field</label>
-
-<select
-name="EducationField"
-required>
-
-<option value="Life Sciences">Life Sciences</option>
-
-<option value="Medical">Medical</option>
-
-<option value="Marketing">Marketing</option>
-
-<option value="Technical Degree">Technical Degree</option>
-
-<option value="Human Resources">Human Resources</option>
-
-<option value="Other">Other</option>
-
-</select>
-
-</div>
-
-<div class="input-box">
-
-<label>Business Travel</label>
-
-<select
-name="BusinessTravel"
-required>
-
-<option value="Travel_Rarely">Travel Rarely</option>
-
-<option value="Travel_Frequently">Travel Frequently</option>
-
-<option value="Non-Travel">Non Travel</option>
-
-</select>
-
-</div>
-
-<div class="input-box">
-
-<label>Distance From Home</label>
-
-<input
-type="number"
-name="DistanceFromHome"
-min="1"
-max="29"
-required>
-
-</div>
-
-<div class="input-box">
-
-<label>Department</label>
-
-<select
-name="Department"
-required>
-
-<option value="Research & Development">
-Research & Development
-</option>
-
-<option value="Sales">
-Sales
-</option>
-
-<option value="Human Resources">
-Human Resources
-</option>
-
-</select>
-
-</div>
-
-</div>
-
+      <button type="submit" class="btn btn-primary btn-block" id="submit-btn">
+        <span class="btn-text">Predict Attrition Risk</span>
+      </button>
+    </form>
   </div>
+</main>
+
+<section id="how" class="how">
+  <h2>How the prediction works</h2>
+  <div class="how-grid">
+    <div class="how-card">
+      <span class="how-num">01</span>
+      <h3>Profile Input</h3>
+      <p>You submit an employee's role, compensation, tenure, and satisfaction data.</p>
+    </div>
+    <div class="how-card">
+      <span class="how-num">02</span>
+      <h3>Model Inference</h3>
+      <p>A trained Random Forest pipeline encodes and scores the profile in real time.</p>
+    </div>
+    <div class="how-card">
+      <span class="how-num">03</span>
+      <h3>Risk Report</h3>
+      <p>You get a clear risk level and probability to guide retention conversations.</p>
+    </div>
+  </div>
+</section>
+
+<footer id="about" class="footer">
+  <p>Vantage HR &mdash; Employee Attrition Predictor. Built for internal HR analytics use.</p>
+  <p class="footer-note">Predictions are statistical estimates, not certainties. Use alongside manager judgement.</p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Result &mdash; Vantage HR</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-wrap">
+    <div class="brand">
+      <span class="brand-mark">V</span>
+      <span class="brand-name">Vantage<span class="accent">HR</span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Predictor</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="result-section">
+  <div class="result-card risk-{{ risk_level|lower }}">
+    <p class="eyebrow">Assessment Complete</p>
+    <h1>Predicted Attrition: <span class="result-flag">{{ prediction }}</span></h1>
+
+    <div class="gauge-wrap">
+      <div class="gauge-track">
+        <div class="gauge-fill" style="width: {{ risk_pct }}%;"></div>
+      </div>
+      <div class="gauge-labels">
+        <span>0%</span>
+        <span class="gauge-value">{{ risk_pct }}%</span>
+        <span>100%</span>
+      </div>
+    </div>
+
+    <p class="risk-badge">{{ risk_level }} Risk</p>
+    <p class="result-copy">
+      {% if risk_level == "High" %}
+        This employee shows a strong statistical likelihood of leaving. Consider a
+        proactive retention conversation, workload review, or compensation check-in.
+      {% elif risk_level == "Moderate" %}
+        This employee shows some early risk signals. Keep an eye on satisfaction and
+        engagement over the next few review cycles.
+      {% else %}
+        This employee currently shows a low likelihood of attrition based on the
+        submitted profile.
+      {% endif %}
+    </p>
+
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Run Another Prediction</a>
+  </div>
+
+  <div class="summary-card">
+    <h2>Submitted Profile</h2>
+    <div class="summary-grid">
+      {% for key, value in employee.items() %}
+      <div class="summary-row">
+        <span class="summary-label">{{ field_labels.get(key, key) }}</span>
+        <span class="summary-value">{{ value }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <p>Vantage HR &mdash; Employee Attrition Predictor. Built for internal HR analytics use.</p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

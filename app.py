@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request
-import joblib
-import pandas as pd
-
-app = flask(__name__)
-
-model = joblib.load("models/pipe_ohe.pkl")
+from flask import Flask,render_template
+app=Flask(__name__)
+@app.route('/')
+def home():
+    return render_template('index.html')
+if __name__=='__main__':
+    app.run()

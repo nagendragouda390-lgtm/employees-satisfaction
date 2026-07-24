@@ -1,3 +1,3 @@
 # employees-satisfaction
 # website
-[employee Attrition predictor](https://employees-satisfaction.onrender.com/predict)
+[employee Attrition predictor](https://employees-satisfaction.onrender.com/)

@@ -12,10 +12,10 @@ app = Flask(__name__)
 # ---------------------------------------------------------------------------
 # Load trained pipeline (preprocessing + model bundled together) and metadata
 # ---------------------------------------------------------------------------
-with open(BASE_DIR / "model" / "model.pkl", "rb") as f:
+with open(BASE_DIR / "models" / "model.pkl", "rb") as f:
     MODEL = pickle.load(f)
 
-with open(BASE_DIR / "model" / "meta.json", "r") as f:
+with open(BASE_DIR / "models" / "meta.json", "r") as f:
     META = json.load(f)
 
 FEATURE_ORDER = META["feature_order"]

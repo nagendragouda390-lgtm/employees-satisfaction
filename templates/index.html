@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attrition Predictor</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="navbar">
+    <h2>Employee Attrition Predictor</h2>
+</header>
+
+<div class="container">
+
+    <div class="hero">
+        <h1>Predict Employee Attrition</h1>
+
+        <p>
+            Fill in the employee details below.
+            The AI model will estimate whether the employee
+            is likely to leave the company.
+        </p>
+    </div>
+
+<form action="/predict" method="POST">
+
+<div class="card">
+
+<h3>Personal Information</h3>
+
+<div class="grid">
+
+<div class="input-box">
+<label>Age</label>
+<input
+type="number"
+name="Age"
+min="18"
+max="60"
+required>
+</div>
+
+<div class="input-box">
+<label>Gender</label>
+
+<select name="Gender" required>
+
+<option value="Male">Male</option>
+
+<option value="Female">Female</option>
+
+</select>
+
+</div>
+
+<div class="input-box">
+<label>Marital Status</label>
+
+<select
+name="MaritalStatus"
+required>
+
+<option value="Single">Single</option>
+
+<option value="Married">Married</option>
+
+<option value="Divorced">Divorced</option>
+
+</select>
+
+</div>
+
+<div class="input-box">
+
+<label>Education</label>
+
+<input
+type="number"
+name="Education"
+min="1"
+max="5"
+required>
+
+</div>
+
+<div class="input-box">
+
+<label>Education Field</label>
+
+<select
+name="EducationField"
+required>
+
+<option value="Life Sciences">Life Sciences</option>
+
+<option value="Medical">Medical</option>
+
+<option value="Marketing">Marketing</option>
+
+<option value="Technical Degree">Technical Degree</option>
+
+<option value="Human Resources">Human Resources</option>
+
+<option value="Other">Other</option>
+
+</select>
+
+</div>
+
+<div class="input-box">
+
+<label>Business Travel</label>
+
+<select
+name="BusinessTravel"
+required>
+
+<option value="Travel_Rarely">Travel Rarely</option>
+
+<option value="Travel_Frequently">Travel Frequently</option>
+
+<option value="Non-Travel">Non Travel</option>
+
+</select>
+
+</div>
+
+<div class="input-box">
+
+<label>Distance From Home</label>
+
+<input
+type="number"
+name="DistanceFromHome"
+min="1"
+max="29"
+required>
+
+</div>
+
+<div class="input-box">
+
+<label>Department</label>
+
+<select
+name="Department"
+required>
+
+<option value="Research & Development">
+Research & Development
+</option>
+
+<option value="Sales">
+Sales
+</option>
+
+<option value="Human Resources">
+Human Resources
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+  </div>

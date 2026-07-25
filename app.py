@@ -1,21 +1,108 @@
 import json
 import pickle
+import sqlite3
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for
 
 BASE_DIR = Path(__file__).resolve().parent
+DB_DIR = BASE_DIR / "data"
+DB_DIR.mkdir(exist_ok=True)
+DB_PATH = DB_DIR / "app.db"
 
 app = Flask(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Tiny SQLite layer for visit counting + prediction history.
+#
+# NOTE: On Render's free web service plan, the filesystem is ephemeral --
+# app.db will reset whenever the service redeploys or restarts (it does NOT
+# reset on every request, just on deploys). That's fine for a demo/portfolio
+# project. For counts/history that must survive redeploys, swap this for a
+# hosted database (e.g. Render's free Postgres) and point the DB calls there.
+# ---------------------------------------------------------------------------
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    conn = get_db()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS visits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            visited_at TEXT NOT NULL
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            predicted_at TEXT NOT NULL,
+            prediction TEXT NOT NULL,
+            risk_pct REAL NOT NULL,
+            risk_level TEXT NOT NULL,
+            profile_json TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+
+def log_visit():
+    conn = get_db()
+    conn.execute("INSERT INTO visits (visited_at) VALUES (?)", (datetime.utcnow().isoformat(),))
+    conn.commit()
+    conn.close()
+
+
+def get_visit_count():
+    conn = get_db()
+    count = conn.execute("SELECT COUNT(*) AS c FROM visits").fetchone()["c"]
+    conn.close()
+    return count
+
+
+def log_prediction(prediction, risk_pct, risk_level, profile):
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO predictions (predicted_at, prediction, risk_pct, risk_level, profile_json) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (datetime.utcnow().isoformat(), prediction, risk_pct, risk_level, json.dumps(profile)),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_recent_predictions(limit=50):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM predictions ORDER BY id DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return rows
+
+
+def get_prediction_count():
+    conn = get_db()
+    count = conn.execute("SELECT COUNT(*) AS c FROM predictions").fetchone()["c"]
+    conn.close()
+    return count
+
+
+init_db()
 
 # ---------------------------------------------------------------------------
 # Load trained pipeline (preprocessing + model bundled together) and metadata
 # ---------------------------------------------------------------------------
-with open(BASE_DIR / "models" / "model.pkl", "rb") as f:
+with open(BASE_DIR / "model" / "model.pkl", "rb") as f:
     MODEL = pickle.load(f)
 
-with open(BASE_DIR / "models" / "meta.json", "r") as f:
+with open(BASE_DIR / "model" / "meta.json", "r") as f:
     META = json.load(f)
 
 FEATURE_ORDER = META["feature_order"]
@@ -126,7 +213,8 @@ FORM_FIELDS = build_form_fields()
 
 @app.route("/")
 def index():
-    return render_template("index.html", fields=FORM_FIELDS)
+    log_visit()
+    return render_template("index.html", fields=FORM_FIELDS, visit_count=get_visit_count())
 
 
 @app.route("/predict", methods=["POST"])
@@ -155,6 +243,8 @@ def predict():
     else:
         risk_level = "Low"
 
+    log_prediction(prediction, risk_pct, risk_level, row)
+
     return render_template(
         "result.html",
         prediction=prediction,
@@ -162,6 +252,25 @@ def predict():
         risk_level=risk_level,
         employee=row,
         field_labels=FIELD_LABELS,
+    )
+
+
+@app.route("/history")
+def history():
+    rows = get_recent_predictions(limit=50)
+    records = []
+    for r in rows:
+        records.append({
+            "predicted_at": r["predicted_at"],
+            "prediction": r["prediction"],
+            "risk_pct": r["risk_pct"],
+            "risk_level": r["risk_level"],
+        })
+    return render_template(
+        "history.html",
+        records=records,
+        prediction_count=get_prediction_count(),
+        visit_count=get_visit_count(),
     )
 
 

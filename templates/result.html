@@ -18,6 +18,7 @@
     </div>
     <ul class="nav-links">
       <li><a href="{{ url_for('index') }}">Predictor</a></li>
+      <li><a href="{{ url_for('history') }}">History</a></li>
     </ul>
   </div>
 </nav>
@@ -53,6 +54,7 @@
     </p>
 
     <a href="{{ url_for('index') }}" class="btn btn-primary">Run Another Prediction</a>
+    <a href="{{ url_for('history') }}" class="btn btn-secondary">View Prediction History</a>
   </div>
 
   <div class="summary-card">

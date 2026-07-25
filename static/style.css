@@ -1,5 +1,5 @@
 :root {
-  --navy-950: #0b1222;
+  --navy-950: #0b1220;
   --navy-900: #111a2e;
   --navy-800: #17223d;
   --navy-700: #21304f;
@@ -101,6 +101,55 @@ a { text-decoration: none; color: inherit; }
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(20,184,166,0.35); }
 .btn-block { width: 100%; text-align: center; font-size: 1.02rem; padding: 15px; margin-top: 8px; }
+.btn-secondary {
+  background: transparent;
+  color: var(--navy-900);
+  border: 1.5px solid #e2e8f0;
+  margin-left: 10px;
+}
+.btn-secondary:hover { border-color: var(--teal-500); color: var(--teal-500); }
+
+/* HISTORY PAGE */
+.history-section { max-width: 900px; margin: 0 auto; padding: 60px 24px 90px; }
+.history-header { text-align: center; margin-bottom: 34px; }
+.history-header h1 { font-size: 1.8rem; margin: 0 0 8px; }
+.history-header p { color: var(--slate-600); margin: 0 0 24px; }
+.history-stats { display: flex; justify-content: center; gap: 50px; }
+.history-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 30px;
+  overflow-x: auto;
+}
+.history-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.history-table th {
+  text-align: left;
+  padding: 14px 10px;
+  color: var(--slate-600);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #eef1f5;
+}
+.history-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eef1f5;
+}
+.pred-yes { color: #dc2626; font-weight: 600; }
+.pred-no { color: var(--teal-500); font-weight: 600; }
+.risk-pill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--slate-100);
+}
+.risk-pill.risk-high { background: #fee2e2; color: #dc2626; }
+.risk-pill.risk-moderate { background: #fef3c7; color: #d97706; }
+.risk-pill.risk-low { background: #d1fae5; color: #059669; }
+.empty-state { text-align: center; padding: 40px 0; color: var(--slate-600); }
+.empty-state a { color: var(--teal-500); font-weight: 600; }
 
 /* STATS */
 .stats {

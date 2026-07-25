@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction History &mdash; Vantage HR</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-wrap">
+    <div class="brand">
+      <span class="brand-mark">V</span>
+      <span class="brand-name">Vantage<span class="accent">HR</span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Predictor</a></li>
+      <li><a href="{{ url_for('history') }}">History</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="history-section">
+  <div class="history-header">
+    <h1>Prediction History</h1>
+    <p>A running log of every prediction this app has made, most recent first.</p>
+    <div class="history-stats">
+      <div class="stat">
+        <span class="stat-num">{{ visit_count }}</span>
+        <span class="stat-label">Total site visits</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">{{ prediction_count }}</span>
+        <span class="stat-label">Total predictions run</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-card">
+    {% if records %}
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>When (UTC)</th>
+          <th>Prediction</th>
+          <th>Risk %</th>
+          <th>Risk Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in records %}
+        <tr>
+          <td>{{ r.predicted_at.replace('T', ' ').split('.')[0] }}</td>
+          <td class="pred-{{ r.prediction|lower }}">{{ r.prediction }}</td>
+          <td>{{ r.risk_pct }}%</td>
+          <td><span class="risk-pill risk-{{ r.risk_level|lower }}">{{ r.risk_level }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">No predictions have been run yet. <a href="{{ url_for('index') }}">Run the first one</a>.</p>
+    {% endif %}
+  </div>
+</main>
+
+<footer class="footer">
+  <p>Vantage HR &mdash; Employee Attrition Predictor. Built for internal HR analytics use.</p>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
